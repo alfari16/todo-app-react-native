@@ -4,7 +4,7 @@ import { TouchableNativeFeedback, View, Text } from 'react-native'
 const Button = memo(({ onPress, style, childStyle, children }) => (
   <TouchableNativeFeedback useForeground onPress={onPress}>
     <View style={[defaultStyle, style]}>
-      <Text style={[childStyle]}>{children}</Text>
+      <Text style={childStyle}>{children}</Text>
     </View>
   </TouchableNativeFeedback>
 ))

@@ -27,11 +27,13 @@ class Main extends Component {
 
   changeHeader = category => this.setState({ category })
   filteredList = () =>
-    this.props.context.list.filter(el =>
-      this.state.category === 'Semua'
-        ? true
-        : this.state.category === el.category
-    )
+    this.props.context.list.map(el => ({
+      ...el,
+      isShow:
+        this.state.category === 'Semua'
+          ? true
+          : this.state.category === el.category
+    }))
 
   filteredCategories = () => this.props.context.list.map(el => el.category)
 

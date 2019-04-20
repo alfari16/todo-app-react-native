@@ -119,9 +119,15 @@ class App extends Component {
     categories.push({ name, id: Date.now() })
     this._setCategoryState(categories)
   }
-  _addTask = name => {
+  _addTask = newList => {
     const list = [...this.state.list]
-    list.push({ name, id: Date.now() })
+    const foundIdx = list.findIndex(el => el.id === newList.id)
+    if (foundIdx > -1) list[foundIdx] = newList
+    else list.push(newList)
+    this._setTaskState(list)
+  }
+  _removeTask = id => {
+    const list = [...this.state.list].filter(el => el.id !== id)
     this._setTaskState(list)
   }
   _removeCategory = async id => {
@@ -168,6 +174,8 @@ class App extends Component {
           categories,
           addCategoryState,
           addTaskState,
+          _addTask: this._addTask,
+          _removeTask: this._removeTask,
           _setList: this._setList,
           _addCategory: this._addCategory,
           _removeCategory: this._removeCategory,

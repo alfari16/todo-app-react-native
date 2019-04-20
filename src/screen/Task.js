@@ -1,18 +1,16 @@
-import React, { PureComponent } from 'react'
+import React, { Fragment, PureComponent } from 'react'
 import { Text } from 'react-native'
-import Container from '../components/Container'
-import { withNavigation } from 'react-navigation'
+import Form from '../components/Form'
 
-class Task extends PureComponent {
+export default class Task extends PureComponent {
+  static navigationOptions = ({ navigation }) => {
+    return {
+      title: navigation.getParam('data', {}).title
+    }
+  }
+
   render() {
     const data = this.props.navigation.getParam('data', {})
-    return (
-      <Container>
-        <Text>{data.id}</Text>
-        <Text>{JSON.stringify(data)}</Text>
-      </Container>
-    )
+    return <Form {...this.props} isCompletable data={data} />
   }
 }
-
-export default withNavigation(Task)

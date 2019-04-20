@@ -22,10 +22,10 @@ export default ({ onDateSelected, style, date }) => {
         const [hour, minute] = moment(date)
           .format('HH:mm')
           .split(':')
-        const newTime = moment(`${year}/${month}/${day}`, 'YYYY/M/D')
+        const newTime = moment(`${year}/${month+1}/${day}`, 'YYYY/M/D')
           .hour(hour)
           .minute(minute)
-          .format()
+          .toDate()
         onDateSelected(newTime)
       }
     } catch (error) {

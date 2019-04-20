@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, View, Text, TextInput, TouchableOpacity } from 'react-native'
+import { CheckBox, View, Text, TouchableOpacity } from 'react-native'
 import Input from './Input'
 import CloseBtn from './CloseBtn'
 
@@ -15,7 +15,7 @@ class CheckList extends Component {
   addItem = () => {
     const { input, items } = this.state
     if (input) {
-      this.props.onChange([...items, input])
+      this.props.onChange([...items, { text: input, isComplete: false }])
       this.setState({ input: null })
     }
   }
@@ -26,17 +26,24 @@ class CheckList extends Component {
     this.props.onChange(items)
   }
 
+  changeChecklist = (index, value) => {
+    const { items } = this.state
+    items[index].isComplete = value
+    this.props.onChange(items)
+  }
+
   render() {
     const { input, items } = this.state
+    console.log(items, 'item')
     return (
       <Input label="Checklist">
-        {/* <Text>{JSON.stringify(this.state)}</Text> */}
         <View style={{ marginTop: 10 }}>
           {items.map((el, idx) => (
             <Item
               item={el}
               key={idx}
               index={idx}
+              completeCheck={this.changeChecklist}
               lastIndex={items.length - 1}
               deleteItem={this.deleteItem}
             />
@@ -75,20 +82,10 @@ class CheckList extends Component {
   }
 }
 
-const Item = ({ item, index, lastIndex, deleteItem }) => {
-  const { icon, container, first, elseRow, last } = {
-    icon: {
-      color: '#aaa',
-      fontSize: 15,
-      fontWeight: '900',
-      width: 50,
-      textAlign: 'right',
-      justifyContent: 'center',
-      alignItems: 'center'
-    },
+const Item = ({ item, index, lastIndex, deleteItem, completeCheck }) => {
+  const { container, text, checkbox, first, elseRow, last } = {
     container: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
       alignItems: 'center',
       paddingVertical: 10,
       paddingHorizontal: 15,
@@ -97,6 +94,11 @@ const Item = ({ item, index, lastIndex, deleteItem }) => {
     },
     elseRow: {
       borderTopWidth: 0
+    },
+    text: {
+      flex: 1,
+      marginLeft: 5,
+      textDecorationLine: item.isComplete ? 'line-through' : 'none'
     },
     first: {
       borderTopLeftRadius: 5,
@@ -116,7 +118,12 @@ const Item = ({ item, index, lastIndex, deleteItem }) => {
         index !== lastIndex || last
       ]}
     >
-      <Text>{item}</Text>
+      <CheckBox
+        value={item.isComplete}
+        style={checkbox}
+        onValueChange={value => completeCheck(index, value)}
+      />
+      <Text style={text}>{item.text}</Text>
       <CloseBtn onPress={() => deleteItem(index)} />
     </View>
   )
