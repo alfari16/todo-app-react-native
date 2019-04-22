@@ -7,6 +7,8 @@ import {
   Dimensions,
   Alert
 } from 'react-native'
+import PushNotification from 'react-native-push-notification'
+import Icon from 'react-native-vector-icons/EvilIcons'
 
 import Container from './Container'
 import Input from './Input'
@@ -26,7 +28,7 @@ class NewTask extends Component {
       desc: null,
       date: new Date(),
       checklist: [],
-      category: null,
+      category: this.props.context.categories[0].name,
       reminder: false,
       ...this.props.navigation.getParam('data', {})
     }
@@ -41,6 +43,9 @@ class NewTask extends Component {
         form: { ...prev.form, category: -1 }
       }))
     }
+  }
+
+  componentDidMount() {
     if (!this.props.context.categories.length) {
       ToastAndroid.show(
         'Kamu harus menambahkan kategori terlebih dahulu',
@@ -58,9 +63,26 @@ class NewTask extends Component {
   }
 
   saveTask = async () => {
-    if (this.state.form.title) {
+    const { title, id, date, reminder } = this.state.form
+    if (title) {
       this.props.context._addTask(this.state.form)
       this.props.navigation.navigate('Main')
+      if (reminder) {
+        try {
+          await PushNotification.cancelLocalNotifications({
+            id
+          })
+          PushNotification.localNotificationSchedule({
+            id,
+            date,
+            message: `Hai! Kamu punya tugas nih: ${title}`,
+            title: 'Pengingat Tugas!',
+            bigText: `Hai! Sibuk ya? Jangan lupa ada tugas yang harus kamu selesaikan: ${title}`
+          })
+        } catch (error) {
+          ToastAndroid.show('Gagal melakukan notifikasi', ToastAndroid.SHORT)
+        }
+      }
     } else this.titleRef.focus()
   }
 
@@ -123,6 +145,7 @@ class NewTask extends Component {
                   })
                   editState()
                 }}
+                icon="close"
               >
                 Tandai Belum Selesai
               </Button>
@@ -137,6 +160,7 @@ class NewTask extends Component {
                   })
                   editState()
                 }}
+                icon="check"
               >
                 Tandai Selesai
               </Button>
@@ -145,6 +169,7 @@ class NewTask extends Component {
               childStyle={child}
               style={[button, { backgroundColor: DARK_RED }]}
               onPress={removeTask}
+              icon="trash"
             >
               Hapus
             </Button>
@@ -171,11 +196,13 @@ class NewTask extends Component {
             containerStyle={inputContainer}
             ref={ref => (this.titleRef = ref)}
             placeholder="Nama Pengingat"
+            autoCorrect={false}
             onChangeText={v => this.handleChange('title', v)}
           />
           <Input
             value={desc}
             style={input}
+            autoCorrect={false}
             containerStyle={inputContainer}
             label="Deskripsi"
             placeholder="Deskripsi Pengingat"
@@ -185,7 +212,6 @@ class NewTask extends Component {
           <DateTimePicker
             style={input}
             containerStyle={inputContainer}
-            time={time}
             date={date}
             onDateSelected={v => this.handleChange('date', v)}
           />
@@ -212,6 +238,7 @@ class NewTask extends Component {
             style={btnWrapper}
             block
             style={{ marginTop: 20 }}
+            icon="archive"
           >
             SIMPAN PENGINGAT
           </Button>

@@ -7,7 +7,6 @@ import Main from './screen/Main'
 import NewTask from './screen/NewTask'
 import Task from './screen/Task'
 import Category from './screen/Category'
-import Swipeable from './screen/Swipeable'
 
 const AddBtn = (functionName, value) => (
   <Consumer>
@@ -32,7 +31,7 @@ const Router = createStackNavigator(
     Main: {
       screen: Main,
       navigationOptions: {
-        title: 'Tugasku',
+        title: 'Pengingat Tugas',
         headerRight: AddBtn('_setAddTaskState', true)
       }
     },
@@ -55,9 +54,6 @@ const Router = createStackNavigator(
     },
     Task: {
       screen: Task
-    },
-    Swipeable: {
-      screen: Swipeable
     }
   },
   {

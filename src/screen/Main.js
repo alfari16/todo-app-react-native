@@ -4,13 +4,14 @@ import TodoList from '../components/TodoList'
 import Container from '../components/Container'
 import { ConsumerProps } from '../util/context.js'
 import { BLUE, LIGHT_BLUE } from '../util/color'
+import Push from 'react-native-push-notification'
 
 class Main extends Component {
   state = {
     category: 'Semua'
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate() {
     if (this.props.context.addTaskState) {
       this.props.navigation.navigate('NewTask')
       this.props.context._setAddTaskState(false)
@@ -35,7 +36,10 @@ class Main extends Component {
           : this.state.category === el.category
     }))
 
-  filteredCategories = () => this.props.context.list.map(el => el.category)
+  filteredCategories = () =>
+    this.props.context.list
+      .map(el => el.category)
+      .filter((el, idx, self) => self.indexOf(el) === idx)
 
   render() {
     return (

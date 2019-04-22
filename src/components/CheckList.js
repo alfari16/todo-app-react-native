@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { CheckBox, View, Text, TouchableOpacity } from 'react-native'
+import Icon from 'react-native-vector-icons/EvilIcons'
 import Input from './Input'
 import CloseBtn from './CloseBtn'
 
@@ -34,7 +35,6 @@ class CheckList extends Component {
 
   render() {
     const { input, items } = this.state
-    console.log(items, 'item')
     return (
       <Input label="Checklist">
         <View style={{ marginTop: 10 }}>
@@ -67,14 +67,15 @@ class CheckList extends Component {
             disableMargin
           />
           <TouchableOpacity onPress={this.addItem} disabled={!input}>
-            <Text
+            {/* <Text
               style={{
                 color: !!input ? '#333' : '#aaa',
                 marginTop: 5
               }}
             >
               Tambah
-            </Text>
+            </Text> */}
+            <Icon name="plus" size={35} />
           </TouchableOpacity>
         </View>
       </Input>

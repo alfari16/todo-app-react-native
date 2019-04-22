@@ -1,32 +1,40 @@
-import React, { PureComponent, Fragment } from 'react'
-import { Animated, Text, View, CheckBox, Alert } from 'react-native'
+import React, { PureComponent } from 'react'
+import {
+  Animated,
+  Text,
+  View,
+  TouchableWithoutFeedback,
+  Alert
+} from 'react-native'
 import moment from 'moment'
 import Card from './Card'
+import Icon from 'react-native-vector-icons/EvilIcons'
 import { RED, ORANGE } from '../util/color'
 
 export default class RawSingleList extends PureComponent {
   state = {
-    _viewHeight: 0,
     isShow: true
   }
   _animated = new Animated.Value(0)
-  _animatedFade = new Animated.Value(0)
 
-  style = {
+  getBgColor = () =>
+    moment(this.props.date).isSame(moment().format(), 'day')
+      ? RED
+      : moment(this.props.date).isSame(
+          moment()
+            .add(1, 'day')
+            .format(),
+          'day'
+        )
+      ? ORANGE
+      : 'white'
+
+  getStyle = () => ({
     container: {
       flexDirection: 'row',
       alignItems: 'center',
       borderRadius: 10,
-      backgroundColor: moment(this.props.date).isSame(moment().format(), 'day')
-        ? RED
-        : moment(this.props.date).isSame(
-            moment()
-              .add(1, 'day')
-              .format(),
-            'day'
-          )
-        ? ORANGE
-        : 'white'
+      backgroundColor: this.getBgColor()
     },
     meta: {
       flex: 1,
@@ -43,8 +51,25 @@ export default class RawSingleList extends PureComponent {
     descStyle: {
       color: '#888'
     },
-    flexWrap: {
-      flexDirection: 'row'
+    unchecked: {
+      backgroundColor: this.props.isComplete
+        ? 'transparent'
+        : this.getBgColor(),
+      width: 25,
+      height: 25,
+      borderRadius: 12.5
+    },
+    uncheckedWrapper: {
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    checkedWrapper: {
+      position: 'relative'
     },
     timeStyle: {
       fontStyle: 'italic',
@@ -64,7 +89,7 @@ export default class RawSingleList extends PureComponent {
         }
       ]
     }
-  }
+  })
 
   componentDidMount() {
     this.setShow(this.props.isShow)
@@ -88,20 +113,23 @@ export default class RawSingleList extends PureComponent {
     }).start()
   }
 
-  onValueChange = value => {
-    const { id, changeStatus } = this.props
-    changeStatus({ id, value })
+  onValueChange = () => {
+    const { id, changeStatus, isComplete, title } = this.props
     Alert.alert(
       'Apakah kamu yakin?',
-      value
-        ? `Tugas ${this.props.title} sudah selesai?`
-        : `Tugas ${this.props.title} belum selesai?`,
+      isComplete
+        ? `Tugas ${title} belum selesai?`
+        : `Tugas ${title} sudah selesai?`,
       [
         {
-          text: 'Tidak',
-          onPress: () => changeStatus({ id, value: !value })
+          text: 'Tidak'
         },
-        { text: 'Ya' }
+        {
+          text: 'Ya',
+          onPress: () => {
+            changeStatus({ id, value: !isComplete })
+          }
+        }
       ],
       {
         onDismiss: () => false
@@ -109,54 +137,50 @@ export default class RawSingleList extends PureComponent {
     )
   }
 
+  completedChecklist = () => this.props.checklist.filter(el => el.isComplete)
+
   render() {
-    const {
-      title,
-      desc,
-      date,
-      isComplete,
-      checklist,
-      navigation,
-      category,
-      data
-    } = this.props
+    const { title, date, checklist, navigation, category, data } = this.props
     const {
       container,
       meta,
       titleStyle,
       subTitleStyle,
       descStyle,
-      flexWrap,
-      timeStyle
-    } = this.style
+      checkedWrapper,
+      unchecked,
+      uncheckedWrapper,
+      timeStyle,
+      animated
+    } = this.getStyle()
 
     const displayedDate = moment(date).calendar()
     const clock = moment(date).format('HH:mm')
     if (!this.state.isShow) return null
     return (
-      <Animated.View
-        onLayout={e =>
-          this.setState({
-            _viewHeight: e.nativeEvent.layout.height
-          })
-        }
-        style={this.style.animated}
-      >
+      <Animated.View style={animated}>
         <Card
           style={container}
           onPress={() => navigation.navigate('Task', { data })}
         >
-          <CheckBox value={isComplete} onValueChange={this.onValueChange} />
+          <TouchableWithoutFeedback onPress={this.onValueChange}>
+            <View style={checkedWrapper}>
+              <Icon name="check" size={50} />
+              <View style={uncheckedWrapper}>
+                <View style={unchecked} />
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+          {/* <CheckBox value={isComplete} onValueChange={this.onValueChange} /> */}
           <View style={meta}>
             <Text style={titleStyle}>{title}</Text>
             <Text style={subTitleStyle}>{category}</Text>
-            <View style={flexWrap}>
-              {desc && <Text style={descStyle}>{desc}</Text>}
-              {desc && !!checklist.length && <Text> - </Text>}
-              {!!checklist.length && (
-                <Text style={descStyle}>{checklist.length} checklist</Text>
-              )}
-            </View>
+            {!!checklist.length && (
+              <Text style={descStyle}>
+                {this.completedChecklist().length}/{checklist.length} checklist
+                selesai
+              </Text>
+            )}
             <Text style={timeStyle}>
               {displayedDate} | Pukul: {clock}
             </Text>

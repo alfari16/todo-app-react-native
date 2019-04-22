@@ -35,7 +35,7 @@ class App extends Component {
             desc: 'Desc 1',
             date: moment()
               .subtract(3, 'months')
-              .format(),
+              .toDate(),
             checklist: [
               { text: 'Checklist 1', isComplete: true },
               { isComplete: false, text: 'Checklist 4' }
@@ -51,7 +51,7 @@ class App extends Component {
             date: moment()
               .add(3, 'hours')
               .add('30', 'minutes')
-              .format(),
+              .toDate(),
             checklist: [],
             category: 'Daily',
             reminder: false,
@@ -64,7 +64,7 @@ class App extends Component {
             date: moment()
               .add(1, 'days')
               .add('10', 'hours')
-              .format(),
+              .toDate(),
             checklist: [
               { isComplete: false, text: 'Checklist 3' },
               { isComplete: false, text: 'Checklist 2' }
@@ -78,10 +78,12 @@ class App extends Component {
             title: 'Title 4',
             desc: 'Desc 4',
             date: moment()
-              .add(3, 'days')
-              .add('10', 'hours')
-              .format(),
-            checklist: ['Checklist 3', 'Checklist 2'],
+              .add(1, 'month')
+              .toDate(),
+            checklist: [
+              { isComplete: false, text: 'Checklist 3' },
+              { isComplete: true, text: 'Checklist 2' }
+            ],
             category: 'Kerja',
             reminder: false,
             isComplete: false
@@ -114,6 +116,7 @@ class App extends Component {
     }
   }
 
+  _goToAppInfo = () => this.props.navigation
   _addCategory = name => {
     const categories = [...this.state.categories]
     categories.push({ name, id: Date.now() })

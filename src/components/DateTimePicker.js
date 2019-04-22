@@ -13,8 +13,10 @@ import moment from 'moment'
 import Input from './Input'
 
 export default ({ onDateSelected, style, date }) => {
+  console.log(date, new Date())
   const selectDate = async () => {
     try {
+      date = moment(date).toDate()
       const { action, year, month, day } = await DatePickerAndroid.open({
         date
       })
@@ -22,10 +24,11 @@ export default ({ onDateSelected, style, date }) => {
         const [hour, minute] = moment(date)
           .format('HH:mm')
           .split(':')
-        const newTime = moment(`${year}/${month+1}/${day}`, 'YYYY/M/D')
+        const newTime = moment(`${year}/${month + 1}/${day}`, 'YYYY/M/D')
           .hour(hour)
           .minute(minute)
           .toDate()
+        console.log(newTime, 'ds')
         onDateSelected(newTime)
       }
     } catch (error) {
@@ -48,7 +51,7 @@ export default ({ onDateSelected, style, date }) => {
         const newTime = moment(date)
           .hour(hour)
           .minute(minute)
-          .format()
+          .toDate()
         onDateSelected(newTime)
       }
     } catch (error) {
