@@ -11,7 +11,8 @@ class App extends Component {
     list: [],
     categories: [],
     addCategoryState: false,
-    addTaskState: false
+    addTaskState: false,
+    creditPanel: false
   }
 
   async componentDidMount() {
@@ -167,9 +168,17 @@ class App extends Component {
     this.setState({ addCategoryState })
   }
   _setAddTaskState = addTaskState => this.setState({ addTaskState })
+  _setCreditPanel = () =>
+    this.setState({ creditPanel: !this.state.creditPanel })
 
   render() {
-    const { list, categories, addCategoryState, addTaskState } = this.state
+    const {
+      list,
+      categories,
+      addCategoryState,
+      addTaskState,
+      creditPanel
+    } = this.state
     return (
       <Provider
         value={{
@@ -177,6 +186,7 @@ class App extends Component {
           categories,
           addCategoryState,
           addTaskState,
+          creditPanel,
           _addTask: this._addTask,
           _removeTask: this._removeTask,
           _setList: this._setList,
@@ -184,7 +194,8 @@ class App extends Component {
           _removeCategory: this._removeCategory,
           _setCategory: this._setCategory,
           _setAddCategoryState: this._setAddCategoryState,
-          _setAddTaskState: this._setAddTaskState
+          _setAddTaskState: this._setAddTaskState,
+          _setCreditPanel: this._setCreditPanel
         }}
       >
         <View style={{ flex: 1 }}>

@@ -2,6 +2,7 @@ import React from 'react'
 import { Text } from 'react-native'
 import { createStackNavigator, createAppContainer } from 'react-navigation'
 import { Consumer } from './util/context'
+import Icon from 'react-native-vector-icons/EvilIcons'
 
 import Main from './screen/Main'
 import NewTask from './screen/NewTask'
@@ -26,13 +27,31 @@ const AddBtn = (functionName, value) => (
   </Consumer>
 )
 
+const openCredit = (
+  <Consumer>
+    {props => (
+      <Icon
+        onPress={props._setCreditPanel}
+        name="navicon"
+        size={30}
+        style={{ marginHorizontal: 10 }}
+      />
+    )}
+  </Consumer>
+)
+
 const Router = createStackNavigator(
   {
     Main: {
       screen: Main,
       navigationOptions: {
         title: 'Pengingat Tugas',
-        headerRight: AddBtn('_setAddTaskState', true)
+        headerRight: AddBtn('_setAddTaskState', true),
+        headerLeft: openCredit,
+        headerTitleStyle: {
+          flex: 1,
+          marginLeft: -10
+        }
       }
     },
     NewTask: {

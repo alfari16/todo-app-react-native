@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { View, Text, TouchableOpacity, FlatList } from 'react-native'
+import { Animated, View, Text, TouchableOpacity, FlatList } from 'react-native'
 import TodoList from '../components/TodoList'
 import Container from '../components/Container'
 import { ConsumerProps } from '../util/context.js'
 import { BLUE, LIGHT_BLUE } from '../util/color'
-import Push from 'react-native-push-notification'
+import { RectButton } from 'react-native-gesture-handler'
+import Swipeable from 'react-native-gesture-handler/Swipeable'
 
 class Main extends Component {
   state = {

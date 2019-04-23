@@ -1,21 +1,19 @@
 import React, { PureComponent } from 'react'
-import {
-  Animated,
-  Text,
-  View,
-  TouchableWithoutFeedback,
-  Alert
-} from 'react-native'
+import { Animated, Text, View, Alert } from 'react-native'
 import moment from 'moment'
-import Card from './Card'
 import Icon from 'react-native-vector-icons/EvilIcons'
-import { RED, ORANGE } from '../util/color'
+import Swipeable from 'react-native-gesture-handler/Swipeable'
+import { RectButton } from 'react-native-gesture-handler'
+import { RED, ORANGE, DARK_RED, DARK_GREEN, DARK_ORANGE } from '../util/color'
+
+const AnimatedIcon = Animated.createAnimatedComponent(Icon)
 
 export default class RawSingleList extends PureComponent {
   state = {
     isShow: true
   }
   _animated = new Animated.Value(0)
+  _swipeableRow = null
 
   getBgColor = () =>
     moment(this.props.date).isSame(moment().format(), 'day')
@@ -31,9 +29,15 @@ export default class RawSingleList extends PureComponent {
 
   getStyle = () => ({
     container: {
+      borderRadius: 10,
+      overflow: 'hidden',
+      elevation: 2,
+      marginBottom: 10
+    },
+    rectContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      borderRadius: 10,
+      padding: 10,
       backgroundColor: this.getBgColor()
     },
     meta: {
@@ -88,6 +92,26 @@ export default class RawSingleList extends PureComponent {
           })
         }
       ]
+    },
+    leftAction: {
+      backgroundColor: this.props.isComplete ? DARK_ORANGE : DARK_GREEN
+    },
+    actionIcon: {
+      width: 30,
+      marginHorizontal: 10
+    },
+    action: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row'
+    },
+    textAction: {
+      color: 'white',
+      fontSize: 18
+    },
+    rightAction: {
+      backgroundColor: DARK_RED
     }
   })
 
@@ -127,7 +151,10 @@ export default class RawSingleList extends PureComponent {
         {
           text: 'Ya',
           onPress: () => {
-            changeStatus({ id, value: !isComplete })
+            changeStatus({
+              id,
+              value: !isComplete
+            })
           }
         }
       ],
@@ -138,6 +165,61 @@ export default class RawSingleList extends PureComponent {
   }
 
   completedChecklist = () => this.props.checklist.filter(el => el.isComplete)
+
+  renderLeftActions = (progress, dragX) => {
+    const { action, actionIcon, textAction, leftAction } = this.getStyle()
+    const scale = dragX.interpolate({
+      inputRange: [0, 80],
+      outputRange: [0, 1],
+      extrapolate: 'clamp'
+    })
+    return (
+      <RectButton
+        style={[action, leftAction]}
+        onPress={() => {
+          this.onValueChange()
+          this._swipeableRow.close()
+        }}
+      >
+        <AnimatedIcon
+          name="archive"
+          size={30}
+          color="#fff"
+          style={[actionIcon, { transform: [{ scale }] }]}
+        />
+        <Text style={textAction}>
+          {this.props.isComplete ? 'Tandai Belum Selesai' : 'Tandai Selesai'}
+        </Text>
+      </RectButton>
+    )
+  }
+  renderRightActions = (progress, dragX) => {
+    const { action, actionIcon, textAction, rightAction } = this.getStyle()
+    const scale = dragX.interpolate({
+      inputRange: [-80, 0],
+      outputRange: [1, 0],
+      extrapolate: 'clamp'
+    })
+    return (
+      <RectButton
+        style={[action, rightAction]}
+        onPress={() => {
+          this._swipeableRow.close()
+        }}
+      >
+        <AnimatedIcon
+          name="trash"
+          size={30}
+          color="#fff"
+          style={[actionIcon, { transform: [{ scale }] }]}
+        />
+        <Text style={textAction}>Hapus</Text>
+      </RectButton>
+    )
+  }
+  updateRef = ref => {
+    this._swipeableRow = ref
+  }
 
   render() {
     const { title, date, checklist, navigation, category, data } = this.props
@@ -151,41 +233,52 @@ export default class RawSingleList extends PureComponent {
       unchecked,
       uncheckedWrapper,
       timeStyle,
-      animated
+      animated,
+      rectContainer
     } = this.getStyle()
 
     const displayedDate = moment(date).calendar()
     const clock = moment(date).format('HH:mm')
     if (!this.state.isShow) return null
     return (
-      <Animated.View style={animated}>
-        <Card
-          style={container}
-          onPress={() => navigation.navigate('Task', { data })}
+      <Animated.View style={[container, animated]}>
+        <Swipeable
+          ref={this.updateRef}
+          friction={2}
+          leftThreshold={80}
+          rightThreshold={80}
+          renderLeftActions={this.renderLeftActions}
+          renderRightActions={this.renderRightActions}
         >
-          <TouchableWithoutFeedback onPress={this.onValueChange}>
+          <RectButton
+            onPress={() =>
+              navigation.navigate('Task', {
+                data
+              })
+            }
+            style={rectContainer}
+          >
             <View style={checkedWrapper}>
               <Icon name="check" size={50} />
               <View style={uncheckedWrapper}>
                 <View style={unchecked} />
               </View>
             </View>
-          </TouchableWithoutFeedback>
-          {/* <CheckBox value={isComplete} onValueChange={this.onValueChange} /> */}
-          <View style={meta}>
-            <Text style={titleStyle}>{title}</Text>
-            <Text style={subTitleStyle}>{category}</Text>
-            {!!checklist.length && (
-              <Text style={descStyle}>
-                {this.completedChecklist().length}/{checklist.length} checklist
-                selesai
+            <View style={meta}>
+              <Text style={titleStyle}>{title}</Text>
+              <Text style={subTitleStyle}>{category}</Text>
+              {!!checklist.length && (
+                <Text style={descStyle}>
+                  {this.completedChecklist().length}/{checklist.length}{' '}
+                  checklist selesai
+                </Text>
+              )}
+              <Text style={timeStyle}>
+                {displayedDate} - {clock}
               </Text>
-            )}
-            <Text style={timeStyle}>
-              {displayedDate} | Pukul: {clock}
-            </Text>
-          </View>
-        </Card>
+            </View>
+          </RectButton>
+        </Swipeable>
       </Animated.View>
     )
   }

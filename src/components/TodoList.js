@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text, FlatList } from 'react-native'
+import { View, Text } from 'react-native'
+import { FlatList } from 'react-native-gesture-handler'
 import { withNavigation } from 'react-navigation'
 import moment from 'moment'
 import RawSingleList from './SingleList'
