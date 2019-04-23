@@ -102,7 +102,6 @@ export default class RawSingleList extends PureComponent {
     },
     action: {
       flex: 1,
-      justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row'
     },
@@ -111,7 +110,8 @@ export default class RawSingleList extends PureComponent {
       fontSize: 18
     },
     rightAction: {
-      backgroundColor: DARK_RED
+      backgroundColor: DARK_RED,
+      justifyContent: 'flex-end'
     }
   })
 
@@ -138,33 +138,18 @@ export default class RawSingleList extends PureComponent {
   }
 
   onValueChange = () => {
-    const { id, changeStatus, isComplete, title } = this.props
-    Alert.alert(
-      'Apakah kamu yakin?',
-      isComplete
-        ? `Tugas ${title} belum selesai?`
-        : `Tugas ${title} sudah selesai?`,
-      [
-        {
-          text: 'Tidak'
-        },
-        {
-          text: 'Ya',
-          onPress: () => {
-            changeStatus({
-              id,
-              value: !isComplete
-            })
-          }
-        }
-      ],
-      {
-        onDismiss: () => false
-      }
-    )
+    this._swipeableRow.close()
+    const { id, isComplete, title } = this.props
+    this.props.context._setList({ id, title, value: isComplete })
   }
 
   completedChecklist = () => this.props.checklist.filter(el => el.isComplete)
+
+  deleteTask = () => {
+    this._swipeableRow.close()
+    const { id, title } = this.props
+    this.props.context._removeTask(id, title)
+  }
 
   renderLeftActions = (progress, dragX) => {
     const { action, actionIcon, textAction, leftAction } = this.getStyle()
@@ -174,15 +159,9 @@ export default class RawSingleList extends PureComponent {
       extrapolate: 'clamp'
     })
     return (
-      <RectButton
-        style={[action, leftAction]}
-        onPress={() => {
-          this.onValueChange()
-          this._swipeableRow.close()
-        }}
-      >
+      <RectButton style={[action, leftAction]}>
         <AnimatedIcon
-          name="archive"
+          name={this.props.isComplete ? 'close' : 'check'}
           size={30}
           color="#fff"
           style={[actionIcon, { transform: [{ scale }] }]}
@@ -201,19 +180,14 @@ export default class RawSingleList extends PureComponent {
       extrapolate: 'clamp'
     })
     return (
-      <RectButton
-        style={[action, rightAction]}
-        onPress={() => {
-          this._swipeableRow.close()
-        }}
-      >
+      <RectButton style={[action, rightAction]}>
+        <Text style={textAction}>Hapus</Text>
         <AnimatedIcon
           name="trash"
           size={30}
           color="#fff"
           style={[actionIcon, { transform: [{ scale }] }]}
         />
-        <Text style={textAction}>Hapus</Text>
       </RectButton>
     )
   }
@@ -245,6 +219,8 @@ export default class RawSingleList extends PureComponent {
         <Swipeable
           ref={this.updateRef}
           friction={2}
+          onSwipeableRightOpen={this.deleteTask}
+          onSwipeableLeftOpen={this.onValueChange}
           leftThreshold={80}
           rightThreshold={80}
           renderLeftActions={this.renderLeftActions}

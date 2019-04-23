@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View } from 'react-native'
+import { View, Alert } from 'react-native'
 import AppNavigation from './AppNavigation'
 import { storageVersion } from '../app.json'
 import moment from 'moment'
@@ -130,21 +130,55 @@ class App extends Component {
     else list.push(newList)
     this._setTaskState(list)
   }
-  _removeTask = id => {
-    const list = [...this.state.list].filter(el => el.id !== id)
-    this._setTaskState(list)
+  _removeTask = (id, title) => {
+    return new Promise(res => {
+      Alert.alert('Apakah kamu yakin?', `Ingin menghapus ${title}?`, [
+        { text: 'Tidak', onPress: () => res(false) },
+        {
+          text: 'Ya',
+          onPress: () => {
+            const list = [...this.state.list].filter(el => el.id !== id)
+            this._setTaskState(list)
+            res(true)
+          }
+        }
+      ])
+    })
   }
   _removeCategory = async id => {
     const categories = this.state.categories.filter(el => el.id !== id)
     this._setCategoryState(categories)
   }
-  _setList = ({ id, value: isComplete }) => {
-    const list = this.state.list.map(el => {
-      if (el.id === id) return { ...el, isComplete }
-      return el
+  _setList = ({ id, title, value: isComplete }) => {
+    return new Promise(res => {
+      Alert.alert(
+        'Apakah kamu yakin?',
+        isComplete
+          ? `Tugas ${title} belum selesai?`
+          : `Tugas ${title} sudah selesai?`,
+        [
+          {
+            text: 'Tidak',
+            onPress: () => res(false)
+          },
+          {
+            text: 'Ya',
+            onPress: () => {
+              const list = this.state.list.map(el => {
+                if (el.id === id) return { ...el, isComplete: !isComplete }
+                return el
+              })
+              this._setTaskState(list)
+              console.log(list)
+              res(true)
+            }
+          }
+        ],
+        {
+          onDismiss: () => res(false)
+        }
+      )
     })
-    console.log(id, isComplete)
-    this._setTaskState(list)
   }
   _setCategory = ({ value: name, id }) => {
     const newCategories = this.state.categories.map(el => {

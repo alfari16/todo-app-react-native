@@ -46,6 +46,7 @@ class CheckList extends Component {
               completeCheck={this.changeChecklist}
               lastIndex={items.length - 1}
               deleteItem={this.deleteItem}
+              showCheck={this.props.showCheck}
             />
           ))}
         </View>
@@ -67,14 +68,6 @@ class CheckList extends Component {
             disableMargin
           />
           <TouchableOpacity onPress={this.addItem} disabled={!input}>
-            {/* <Text
-              style={{
-                color: !!input ? '#333' : '#aaa',
-                marginTop: 5
-              }}
-            >
-              Tambah
-            </Text> */}
             <Icon name="plus" size={35} />
           </TouchableOpacity>
         </View>
@@ -83,8 +76,15 @@ class CheckList extends Component {
   }
 }
 
-const Item = ({ item, index, lastIndex, deleteItem, completeCheck }) => {
-  const { container, text, checkbox, first, elseRow, last } = {
+const Item = ({
+  item,
+  index,
+  lastIndex,
+  deleteItem,
+  completeCheck,
+  showCheck
+}) => {
+  const { container, isShowCheck, text, checkbox, first, elseRow, last } = {
     container: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -98,7 +98,9 @@ const Item = ({ item, index, lastIndex, deleteItem, completeCheck }) => {
     },
     text: {
       flex: 1,
-      marginLeft: 5,
+      marginLeft: 5
+    },
+    isShowCheck: {
       textDecorationLine: item.isComplete ? 'line-through' : 'none'
     },
     first: {
@@ -119,12 +121,14 @@ const Item = ({ item, index, lastIndex, deleteItem, completeCheck }) => {
         index !== lastIndex || last
       ]}
     >
-      <CheckBox
-        value={item.isComplete}
-        style={checkbox}
-        onValueChange={value => completeCheck(index, value)}
-      />
-      <Text style={text}>{item.text}</Text>
+      {showCheck && (
+        <CheckBox
+          value={item.isComplete}
+          style={checkbox}
+          onValueChange={value => completeCheck(index, value)}
+        />
+      )}
+      <Text style={[text, showCheck && isShowCheck]}>{item.text}</Text>
       <CloseBtn onPress={() => deleteItem(index)} />
     </View>
   )

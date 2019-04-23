@@ -2,10 +2,11 @@ import React from 'react'
 import { View, Text } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { withNavigation } from 'react-navigation'
+import { ConsumerProps } from '../util/context'
 import moment from 'moment'
 import RawSingleList from './SingleList'
 
-const SingleList = withNavigation(RawSingleList)
+const SingleList = ConsumerProps(withNavigation(RawSingleList))
 
 export default ({ list, changeStatus }) => {
   const sort = list.sort(

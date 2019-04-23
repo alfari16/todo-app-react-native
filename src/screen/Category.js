@@ -49,32 +49,36 @@ class Category extends Component {
     const {
       modal: { visibility, title, value }
     } = this.state
-    const { input, miniLabel } = style
+    const { input, miniLabel, categoryNotFound } = style
 
     return (
       <Fragment>
         <Container>
-          <FlatList
-            data={categories}
-            keyExtractor={data => data.id.toString()}
-            renderItem={data => (
-              <Item
-                name={data.item.name}
-                onDelete={() => this.deleteCategory(data.item.id)}
-                onPress={() =>
-                  this.setState(prev => ({
-                    ...prev,
-                    modal: {
-                      visibility: !prev.modal.visibility,
-                      title: 'Edit Kategori',
-                      value: data.item.name,
-                      id: data.item.id
-                    }
-                  }))
-                }
-              />
-            )}
-          />
+          {!!categories.length ? (
+            <FlatList
+              data={categories}
+              keyExtractor={data => data.id.toString()}
+              renderItem={data => (
+                <Item
+                  name={data.item.name}
+                  onDelete={() => this.deleteCategory(data.item.id)}
+                  onPress={() =>
+                    this.setState(prev => ({
+                      ...prev,
+                      modal: {
+                        visibility: !prev.modal.visibility,
+                        title: 'Edit Kategori',
+                        value: data.item.name,
+                        id: data.item.id
+                      }
+                    }))
+                  }
+                />
+              )}
+            />
+          ) : (
+            <Text style={categoryNotFound}>Tidak ada kategori tersimpan</Text>
+          )}
         </Container>
         <Modal
           animationType="fade"
@@ -138,6 +142,10 @@ const style = {
     color: '#bbb',
     marginTop: 5,
     fontSize: 12
+  },
+  categoryNotFound: {
+    color: '#999',
+    textAlign: 'center'
   }
 }
 

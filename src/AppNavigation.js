@@ -72,7 +72,12 @@ const Router = createStackNavigator(
       }
     },
     Task: {
-      screen: Task
+      screen: Task,
+      navigationOptions: {
+        headerStyle: {
+          marginBottom: 0
+        }
+      }
     }
   },
   {

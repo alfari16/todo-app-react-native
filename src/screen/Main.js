@@ -1,11 +1,9 @@
-import React, { Component } from 'react'
-import { Animated, View, Text, TouchableOpacity, FlatList } from 'react-native'
+import React, { Component, memo } from 'react'
+import { View, Text, TouchableOpacity, FlatList } from 'react-native'
 import TodoList from '../components/TodoList'
 import Container from '../components/Container'
 import { ConsumerProps } from '../util/context.js'
 import { BLUE, LIGHT_BLUE } from '../util/color'
-import { RectButton } from 'react-native-gesture-handler'
-import Swipeable from 'react-native-gesture-handler/Swipeable'
 
 class Main extends Component {
   state = {
@@ -17,10 +15,6 @@ class Main extends Component {
       this.props.navigation.navigate('NewTask')
       this.props.context._setAddTaskState(false)
     }
-  }
-
-  changeStatus = ({ id, value }) => {
-    this.props.context._setList({ id, value })
   }
 
   navigateToNewTask = () => {
@@ -50,7 +44,7 @@ class Main extends Component {
           categories={this.filteredCategories()}
           activated={this.state.category}
         />
-        <TodoList list={this.filteredList()} changeStatus={this.changeStatus} />
+        <TodoList list={this.filteredList()} />
       </Container>
     )
   }
@@ -73,12 +67,12 @@ const Header = ({ onChange, activated, categories }) => {
             onPress={onChange}
           />
         )}
-        keyExtractor={data => `${data}-${Math.random()}`}
+        keyExtractor={data => data.toString()}
       />
     </View>
   )
 }
-const HeaderItem = ({ title, onPress, activated }) => {
+const HeaderItem = memo(({ title, onPress, activated }) => {
   const { text, container } = {
     text: {
       color: 'white'
@@ -99,6 +93,6 @@ const HeaderItem = ({ title, onPress, activated }) => {
       </View>
     </TouchableOpacity>
   )
-}
+})
 
 export default ConsumerProps(Main)
