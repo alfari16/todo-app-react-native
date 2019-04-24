@@ -154,7 +154,6 @@ class NewTask extends Component {
           />
           <Reminder
             value={reminder}
-            label="Set alarm pengingat"
             onValueChange={v => this.handleChange('reminder', v)}
           />
           <View style={{ flex: 1 }} />

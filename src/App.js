@@ -5,6 +5,8 @@ import { storageVersion } from '../app.json'
 import moment from 'moment'
 import AsyncStorage from '@react-native-community/async-storage'
 import { Provider } from './util/context'
+import SplashScreen from 'react-native-splash-screen'
+import PushNotif from 'react-native-push-notification'
 
 class App extends Component {
   state = {
@@ -16,13 +18,17 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    await this.generateDummyData()
+    const registered = await AsyncStorage.getItem(
+      `${storageVersion}-registered`
+    )
+    if (!registered) await this.generateDummyData()
     const [listArr, categoriesArr] = await AsyncStorage.multiGet([
       `${storageVersion}-list`,
       `${storageVersion}-categories`
     ])
     const list = JSON.parse(listArr[1]) || []
     const categories = JSON.parse(categoriesArr[1]) || []
+    SplashScreen.hide()
     this.setState({ list, categories })
   }
   generateDummyData = async () => {
@@ -32,61 +38,31 @@ class App extends Component {
         JSON.stringify([
           {
             id: Date.now() + Math.random(),
-            title: 'Title 1',
-            desc: 'Desc 1',
+            title: 'Swipe ke kanan untuk menghapus',
+            desc:
+              'Kamu bisa menambah checklist dengan mengedit tugas ini. Tap pada ikon pensil.',
             date: moment()
               .subtract(3, 'months')
               .toDate(),
             checklist: [
-              { text: 'Checklist 1', isComplete: true },
-              { isComplete: false, text: 'Checklist 4' }
+              { text: 'Mengumpulkan foto', isComplete: true },
+              { isComplete: false, text: 'Membeli bunga' }
             ],
-            category: 'Kuliah',
-            reminder: true,
+            category: 'Daily',
+            reminder: false,
             isComplete: true
           },
           {
             id: Date.now() + Math.random(),
-            title: 'Title 2',
-            desc: null,
+            title: 'Swipe ke kiri untuk menyelesaikan tugas',
+            desc:
+              'Tanda alarm disamping judul adalah tanda notifikasi di aktifkan pada tugas ini.',
             date: moment()
-              .add(3, 'hours')
               .add('30', 'minutes')
               .toDate(),
             checklist: [],
             category: 'Daily',
-            reminder: false,
-            isComplete: false
-          },
-          {
-            id: Date.now() + Math.random(),
-            title: 'Title 3',
-            desc: 'Desc 3',
-            date: moment()
-              .add(1, 'days')
-              .add('10', 'hours')
-              .toDate(),
-            checklist: [
-              { isComplete: false, text: 'Checklist 3' },
-              { isComplete: false, text: 'Checklist 2' }
-            ],
-            category: 'Main',
-            reminder: false,
-            isComplete: false
-          },
-          {
-            id: Date.now() + Math.random(),
-            title: 'Title 4',
-            desc: 'Desc 4',
-            date: moment()
-              .add(1, 'month')
-              .toDate(),
-            checklist: [
-              { isComplete: false, text: 'Checklist 3' },
-              { isComplete: true, text: 'Checklist 2' }
-            ],
-            category: 'Kerja',
-            reminder: false,
+            reminder: true,
             isComplete: false
           }
         ])
@@ -96,18 +72,11 @@ class App extends Component {
         JSON.stringify([
           {
             id: 1,
-            name: 'Kuliah'
-          },
-          {
-            id: 2,
-            name: 'Kerja'
-          },
-          {
-            id: 3,
             name: 'Daily'
           }
         ])
-      ]
+      ],
+      [`${storageVersion}-registered`, true]
     ]
     try {
       await AsyncStorage.multiSet(multiSet)
@@ -115,6 +84,16 @@ class App extends Component {
       // console.error(error)
       ToastAndroid.show('Gagal load AsyncStorage', ToastAndroid.LONG)
     }
+    PushNotif.localNotificationSchedule({
+      id: '2139',
+      date: moment()
+        .add('30', 'minutes')
+        .toDate(),
+      message: `Hai! Kamu punya tugas nih: ${title}`,
+      title: 'Pengingat Tugas!',
+      bigText: `Hai! Sibuk ya? Jangan lupa ada tugas yang harus kamu selesaikan: ${title}`,
+      smallIcon: 'icon'
+    })
   }
 
   _goToAppInfo = () => this.props.navigation

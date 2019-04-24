@@ -1,13 +1,15 @@
 import React, { Component, memo } from 'react'
-import { View, Text, TouchableOpacity, FlatList } from 'react-native'
+import { View, Text, TouchableOpacity, FlatList, Button } from 'react-native'
 import TodoList from '../components/TodoList'
 import Container from '../components/Container'
+import Credit from '../components/Credit'
 import { ConsumerProps } from '../util/context.js'
 import { BLUE, LIGHT_BLUE } from '../util/color'
 
 class Main extends Component {
   state = {
-    category: 'Semua'
+    category: 'Semua',
+    visibility: false
   }
 
   componentDidUpdate() {
@@ -40,6 +42,15 @@ class Main extends Component {
           list={this.props.context.list}
           activeCategory={this.state.category}
         />
+        {this.props.context.creditPanel ? (
+          <Credit
+            transparent
+            animationType="slide"
+            onDismiss={this.props.context._setCreditPanel}
+            closeModal={this.props.context._setCreditPanel}
+            visible={this.props.context.creditPanel}
+          />
+        ) : null}
       </Container>
     )
   }

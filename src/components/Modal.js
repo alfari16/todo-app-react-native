@@ -38,7 +38,7 @@ class ModalCustom extends PureComponent {
         color: '#999'
       }
     }
-    const { onDismiss, children, title, onSave } = this.props
+    const { onDismiss, disableFooter, children, title, onSave } = this.props
 
     return (
       <Modal {...this.props}>
@@ -47,12 +47,14 @@ class ModalCustom extends PureComponent {
             <Card style={card}>
               <Text style={titleStyle}>{title}</Text>
               <View>{children}</View>
-              <View style={action}>
-                <Button onPress={onDismiss} childStyle={buttonCancel}>
-                  Batal
-                </Button>
-                <Button onPress={onSave}>Simpan</Button>
-              </View>
+              {!disableFooter && (
+                <View style={action}>
+                  <Button onPress={onDismiss} childStyle={buttonCancel}>
+                    Batal
+                  </Button>
+                  <Button onPress={onSave}>Simpan</Button>
+                </View>
+              )}
             </Card>
           </View>
         </TouchableWithoutFeedback>

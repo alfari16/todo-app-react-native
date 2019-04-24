@@ -8,6 +8,7 @@ import Main from './screen/Main'
 import NewTask from './screen/NewTask'
 import Task from './screen/Task'
 import Category from './screen/Category'
+import Credit from './components/Credit'
 
 const AddBtn = (functionName, value) => (
   <Consumer>
@@ -76,6 +77,12 @@ const Router = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         title: navigation.getParam('data', {}).title
       })
+    },
+    Credit: {
+      screen: Credit,
+      navigationOptions: {
+        header: null
+      }
     }
   },
   {

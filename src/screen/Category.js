@@ -84,8 +84,8 @@ class Category extends Component {
           animationType="fade"
           transparent
           title={addCategoryState ? 'Tambah Kategori' : title}
-          onDismiss={this.closeModal}
           onSave={addCategoryState ? this.createCategory : this.saveEditing}
+          onDismiss={this.closeModal}
           visible={visibility || addCategoryState}
         >
           <Input
