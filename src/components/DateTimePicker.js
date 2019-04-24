@@ -13,7 +13,7 @@ import moment from 'moment'
 import Input from './Input'
 
 export default ({ onDateSelected, style, date }) => {
-  console.log(date, new Date())
+  // console.log(date, new Date())
   const selectDate = async () => {
     try {
       date = moment(date).toDate()
@@ -28,12 +28,12 @@ export default ({ onDateSelected, style, date }) => {
           .hour(hour)
           .minute(minute)
           .toDate()
-        console.log(newTime, 'ds')
+        // console.log(newTime, 'ds')
         onDateSelected(newTime)
       }
     } catch (error) {
       ToastAndroid.show('Tidak dapat membuka date picker', ToastAndroid.SHORT)
-      console.error(error)
+      // console.error(error)
     }
   }
 
@@ -56,7 +56,7 @@ export default ({ onDateSelected, style, date }) => {
       }
     } catch (error) {
       ToastAndroid.show('Tidak dapat membuka time picker', ToastAndroid.SHORT)
-      console.error(error)
+      // console.error(error)
     }
   }
 

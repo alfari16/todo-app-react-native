@@ -115,13 +115,18 @@ export default class RawSingleList extends PureComponent {
     }
   })
 
+  getCurrentCategory = () =>
+    this.props.activeCategory === 'Semua'
+      ? true
+      : this.props.activeCategory === this.props.category
+
   componentDidMount() {
-    this.setShow(this.props.isShow)
+    this.setShow(this.getCurrentCategory())
   }
   componentDidUpdate() {
-    if (this.props.isShow) this.setState({ isShow: true })
-    this.setShow(this.props.isShow)
-    if (!this.props.isShow) {
+    if (this.getCurrentCategory()) this.setState({ isShow: true })
+    this.setShow(this.getCurrentCategory())
+    if (!this.getCurrentCategory()) {
       setTimeout(() => {
         this.setState({ isShow: false })
       }, 300)
@@ -140,7 +145,11 @@ export default class RawSingleList extends PureComponent {
   onValueChange = () => {
     this._swipeableRow.close()
     const { id, isComplete, title } = this.props
-    this.props.context._setList({ id, title, value: isComplete })
+    this.props.context._setList({
+      id,
+      title,
+      value: isComplete
+    })
   }
 
   completedChecklist = () => this.props.checklist.filter(el => el.isComplete)
@@ -235,7 +244,7 @@ export default class RawSingleList extends PureComponent {
             style={rectContainer}
           >
             <View style={checkedWrapper}>
-              <Icon name="check" size={50} />
+              <Icon name="check" color={DARK_ORANGE} size={50} />
               <View style={uncheckedWrapper}>
                 <View style={unchecked} />
               </View>

@@ -73,11 +73,9 @@ const Router = createStackNavigator(
     },
     Task: {
       screen: Task,
-      navigationOptions: {
-        headerStyle: {
-          marginBottom: 0
-        }
-      }
+      navigationOptions: ({ navigation }) => ({
+        title: navigation.getParam('data', {}).title
+      })
     }
   },
   {

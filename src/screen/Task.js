@@ -10,14 +10,9 @@ import { LIGHT_BLUE, BLUE, DARK_ORANGE, DARK_RED } from '../util/color'
 import { ConsumerProps } from '../util/context'
 
 class Task extends PureComponent {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: navigation.getParam('data', {}).title || 'Hela'
-    }
-  }
-
-  handleChange = () => {
-    console.log('yolo')
+  handleChecklist = checklist => {
+    const { id } = this.props.navigation.getParam('data', {})
+    this.props.context._setChecklist({ checklist, id })
   }
 
   editForm = () => {
@@ -85,11 +80,13 @@ class Task extends PureComponent {
               />
             </View>
             {!!desc && <Text style={descStyle}>{desc}</Text>}
-            <CheckList
-              items={checklist}
-              showCheck
-              onChange={e => this.handleChange('checklist', e)}
-            />
+            {!!checklist.length && (
+              <CheckList
+                items={checklist}
+                showCheck
+                onChange={this.handleChecklist}
+              />
+            )}
             <Action
               isComplete={isComplete}
               title={title}

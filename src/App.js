@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Alert } from 'react-native'
+import { View, Alert, ToastAndroid } from 'react-native'
 import AppNavigation from './AppNavigation'
 import { storageVersion } from '../app.json'
 import moment from 'moment'
@@ -112,8 +112,8 @@ class App extends Component {
     try {
       await AsyncStorage.multiSet(multiSet)
     } catch (error) {
-      console.error(error)
-      // Alert('Error!')
+      // console.error(error)
+      ToastAndroid.show('Gagal load AsyncStorage', ToastAndroid.LONG)
     }
   }
 
@@ -149,6 +149,12 @@ class App extends Component {
     const categories = this.state.categories.filter(el => el.id !== id)
     this._setCategoryState(categories)
   }
+  _setChecklist = ({ id, checklist }) => {
+    const list = this.state.list
+    const find = list.find(el => el.id === id)
+    find.checklist = checklist
+    this._setTaskState(list)
+  }
   _setList = ({ id, title, value: isComplete }) => {
     return new Promise(res => {
       Alert.alert(
@@ -169,7 +175,7 @@ class App extends Component {
                 return el
               })
               this._setTaskState(list)
-              console.log(list)
+              // console.log(list)
               res(true)
             }
           }
@@ -221,6 +227,7 @@ class App extends Component {
           addCategoryState,
           addTaskState,
           creditPanel,
+          _setChecklist: this._setChecklist,
           _addTask: this._addTask,
           _removeTask: this._removeTask,
           _setList: this._setList,

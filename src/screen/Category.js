@@ -1,5 +1,5 @@
 import React, { Component, memo, Fragment } from 'react'
-import { Text, View, FlatList, TouchableWithoutFeedback } from 'react-native'
+import { Text, View, FlatList } from 'react-native'
 import { ConsumerProps } from '../util/context'
 import Container from '../components/Container'
 import Card from '../components/Card'

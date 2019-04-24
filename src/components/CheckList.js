@@ -50,27 +50,29 @@ class CheckList extends Component {
             />
           ))}
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <Input
-            value={input}
-            containerStyle={{ flex: 1, marginRight: 20 }}
-            style={{ borderBottomWidth: 1, borderColor: '#aaa' }}
-            onChangeText={input => this.setState({ input })}
-            returnKeyType="done"
-            onSubmitEditing={this.addItem}
-            placeholder="Tambah checklist"
-            disableMargin
-          />
-          <TouchableOpacity onPress={this.addItem} disabled={!input}>
-            <Icon name="plus" size={35} />
-          </TouchableOpacity>
-        </View>
+        {!this.props.showCheck && (
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Input
+              value={input}
+              containerStyle={{ flex: 1, marginRight: 20 }}
+              style={{ borderBottomWidth: 1, borderColor: '#aaa' }}
+              onChangeText={input => this.setState({ input })}
+              returnKeyType="done"
+              onSubmitEditing={this.addItem}
+              placeholder="Tambah checklist"
+              disableMargin
+            />
+            <TouchableOpacity onPress={this.addItem} disabled={!input}>
+              <Icon name="plus" size={35} />
+            </TouchableOpacity>
+          </View>
+        )}
       </Input>
     )
   }
@@ -129,7 +131,7 @@ const Item = ({
         />
       )}
       <Text style={[text, showCheck && isShowCheck]}>{item.text}</Text>
-      <CloseBtn onPress={() => deleteItem(index)} />
+      {!showCheck && <CloseBtn onPress={() => deleteItem(index)} />}
     </View>
   )
 }

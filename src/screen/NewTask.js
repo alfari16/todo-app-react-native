@@ -13,6 +13,11 @@ import { BLUE } from '../util/color'
 import { ConsumerProps } from '../util/context.js'
 
 class NewTask extends Component {
+  getCategory = () =>
+    this.props.context.categories[0]
+      ? this.props.context.categories[0].name
+      : null
+
   state = {
     form: {
       id: Date.now(),
@@ -20,7 +25,7 @@ class NewTask extends Component {
       desc: null,
       date: new Date(),
       checklist: [],
-      category: this.props.context.categories[0].name,
+      category: this.getCategory(),
       reminder: false,
       ...this.props.navigation.getParam('data', {})
     }
@@ -33,7 +38,7 @@ class NewTask extends Component {
       this.props.navigation.navigate('Category')
       this.setState(prev => ({
         ...prev,
-        form: { ...prev.form, category: -1 }
+        form: { ...prev.form, category: false }
       }))
     }
   }
@@ -45,12 +50,18 @@ class NewTask extends Component {
         ToastAndroid.SHORT
       )
       this.props.navigation.navigate('Category')
-    }
+    } else if (!this.state.form.category)
+      this.setState(prev => ({
+        ...prev,
+        form: {
+          ...prev.form,
+          category: this.getCategory()
+        }
+      }))
+    // console.log(this.state.form)
   }
 
   componentDidMount() {
-    console.log(this.props.navigation.getParam('data'))
-    this.categoryCheck()
     this.didFocusListener = this.props.navigation.addListener('didFocus', () =>
       this.categoryCheck()
     )
@@ -71,9 +82,7 @@ class NewTask extends Component {
     const { isTask, title, id, date, reminder } = this.state.form
     if (title) {
       this.props.context._addTask(this.state.form)
-      if (isTask)
-        this.props.navigation.navigate('Task', { data: this.state.form })
-      else this.props.navigation.navigate('Main')
+
       if (reminder) {
         try {
           await PushNotification.cancelLocalNotifications({
@@ -84,18 +93,22 @@ class NewTask extends Component {
             date,
             message: `Hai! Kamu punya tugas nih: ${title}`,
             title: 'Pengingat Tugas!',
-            bigText: `Hai! Sibuk ya? Jangan lupa ada tugas yang harus kamu selesaikan: ${title}`
+            bigText: `Hai! Sibuk ya? Jangan lupa ada tugas yang harus kamu selesaikan: ${title}`,
+            smallIcon: 'icon'
           })
         } catch (error) {
           ToastAndroid.show('Gagal melakukan notifikasi', ToastAndroid.SHORT)
         }
       }
+      if (isTask)
+        this.props.navigation.navigate('Task', { data: this.state.form })
+      else this.props.navigation.navigate('Main')
     } else this.titleRef.focus()
   }
 
   render() {
     const {
-      form: { title, desc, date, time, checklist, category, reminder, isTask }
+      form: { title, desc, date, checklist, category, reminder }
     } = this.state
     const { input, button, btnWrapper, inputContainer } = style
 

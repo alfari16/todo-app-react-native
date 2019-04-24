@@ -8,19 +8,31 @@ import RawSingleList from './SingleList'
 
 const SingleList = ConsumerProps(withNavigation(RawSingleList))
 
-export default ({ list, changeStatus }) => {
+export default ({ list, changeStatus, activeCategory }) => {
   const sort = list.sort(
     (a, b) => moment(a.date).unix() - moment(b.date).unix()
   )
   const incomplete = [
-    { id: Date.now() + 1, text: 'Tugas Belum selesai' },
+    {
+      id: -1,
+      text: 'Tugas Belum selesai'
+    },
     ...sort.filter(el => !el.isComplete)
   ]
   const complete = [
-    { id: Date.now() + 2, text: 'Tugas selesai' },
+    {
+      id: -2,
+      text: 'Tugas selesai'
+    },
     ...sort.filter(el => el.isComplete)
   ]
   list = [...incomplete, ...complete]
+  if (!list.length)
+    return (
+      <Text style={{ color: '#999', textAlign: 'center', marginTop: 20 }}>
+        Tidak ada tugas
+      </Text>
+    )
   return (
     <FlatList
       data={list}
@@ -41,6 +53,7 @@ export default ({ list, changeStatus }) => {
           <SingleList
             {...data.item}
             data={data.item}
+            activeCategory={activeCategory}
             delay={data.index}
             changeStatus={changeStatus}
           />

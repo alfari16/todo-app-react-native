@@ -22,14 +22,6 @@ class Main extends Component {
   }
 
   changeHeader = category => this.setState({ category })
-  filteredList = () =>
-    this.props.context.list.map(el => ({
-      ...el,
-      isShow:
-        this.state.category === 'Semua'
-          ? true
-          : this.state.category === el.category
-    }))
 
   filteredCategories = () =>
     this.props.context.list
@@ -44,7 +36,10 @@ class Main extends Component {
           categories={this.filteredCategories()}
           activated={this.state.category}
         />
-        <TodoList list={this.filteredList()} />
+        <TodoList
+          list={this.props.context.list}
+          activeCategory={this.state.category}
+        />
       </Container>
     )
   }
