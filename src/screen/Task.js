@@ -52,6 +52,7 @@ class Task extends PureComponent {
       contentContainer,
       floating,
       header,
+      titleWrapper,
       title: titleStyle,
       date: dateStyle,
       desc: descStyle
@@ -65,7 +66,7 @@ class Task extends PureComponent {
           <Status isComplete={isComplete} />
           <View style={card}>
             <View style={header}>
-              <View>
+              <View style={titleWrapper}>
                 <Text style={titleStyle}>
                   {title}{' '}
                   {reminder && <Icon name="clock" color={DARK_RED} size={20} />}
@@ -109,6 +110,9 @@ const style = {
   },
   contentContainer: {
     backgroundColor: 'transparent'
+  },
+  titleWrapper: {
+    flex: 1
   },
   floating: {
     position: 'absolute',

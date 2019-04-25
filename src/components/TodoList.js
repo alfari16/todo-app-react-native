@@ -27,7 +27,7 @@ export default ({ list, changeStatus, activeCategory }) => {
     ...sort.filter(el => el.isComplete)
   ]
   list = [...incomplete, ...complete]
-  if (!list.length)
+  if (!sort.length)
     return (
       <Text style={{ color: '#999', textAlign: 'center', marginTop: 20 }}>
         Tidak ada tugas

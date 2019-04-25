@@ -26,7 +26,7 @@ class NewTask extends Component {
       date: new Date(),
       checklist: [],
       category: this.getCategory(),
-      reminder: false,
+      reminder: true,
       ...this.props.navigation.getParam('data', {})
     }
   }
@@ -83,13 +83,14 @@ class NewTask extends Component {
     if (title) {
       this.props.context._addTask(this.state.form)
 
+      await PushNotification.cancelLocalNotifications({
+        id: id
+      })
       if (reminder) {
         try {
-          await PushNotification.cancelLocalNotifications({
-            id
-          })
           PushNotification.localNotificationSchedule({
             id,
+            userInfo: { id: id },
             date,
             message: `Hai! Kamu punya tugas nih: ${title}`,
             title: 'Pengingat Tugas!',

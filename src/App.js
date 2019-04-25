@@ -76,24 +76,24 @@ class App extends Component {
           }
         ])
       ],
-      [`${storageVersion}-registered`, true]
+      [`${storageVersion}-registered`, 'true']
     ]
     try {
       await AsyncStorage.multiSet(multiSet)
     } catch (error) {
-      // console.error(error)
+      console.error(error)
       ToastAndroid.show('Gagal load AsyncStorage', ToastAndroid.LONG)
     }
-    PushNotif.localNotificationSchedule({
-      id: '2139',
-      date: moment()
-        .add('30', 'minutes')
-        .toDate(),
-      message: `Hai! Kamu punya tugas nih: ${title}`,
-      title: 'Pengingat Tugas!',
-      bigText: `Hai! Sibuk ya? Jangan lupa ada tugas yang harus kamu selesaikan: ${title}`,
-      smallIcon: 'icon'
-    })
+    // PushNotif.localNotificationSchedule({
+    //   id: '2139',
+    //   date: moment()
+    //     .add('30', 'minutes')
+    //     .toDate(),
+    //   message: `Hai! Kamu punya tugas nih: Contoh Pengingat`,
+    //   title: 'Pengingat Tugas!',
+    //   bigText: `Hai! Sibuk ya? Jangan lupa ada tugas yang harus kamu selesaikan.`,
+    //   smallIcon: 'icon'
+    // })
   }
 
   _goToAppInfo = () => this.props.navigation
