@@ -88,7 +88,7 @@ class NewTask extends Component {
       })
       if (reminder) {
         try {
-          PushNotification.localNotificationSchedule({
+          await PushNotification.localNotificationSchedule({
             id,
             userInfo: { id: id },
             date,
