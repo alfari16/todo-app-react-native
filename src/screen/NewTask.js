@@ -82,21 +82,19 @@ class NewTask extends Component {
     const { isTask, title, id, date, reminder } = this.state.form
     if (title) {
       this.props.context._addTask(this.state.form)
-
-      await PushNotification.cancelLocalNotifications({
-        id: id
-      })
+      const obj = {
+        id,
+        userInfo: { id: id },
+        date,
+        message: `Hai! Kamu punya tugas nih: ${title}`,
+        title: 'Pengingat Tugas!',
+        bigText: `Hai! Sibuk ya? Jangan lupa ada tugas yang harus kamu selesaikan: ${title}`,
+        smallIcon: 'icon'
+      }
+      await PushNotification.cancelLocalNotifications(obj)
       if (reminder) {
         try {
-          await PushNotification.localNotificationSchedule({
-            id,
-            userInfo: { id: id },
-            date,
-            message: `Hai! Kamu punya tugas nih: ${title}`,
-            title: 'Pengingat Tugas!',
-            bigText: `Hai! Sibuk ya? Jangan lupa ada tugas yang harus kamu selesaikan: ${title}`,
-            smallIcon: 'icon'
-          })
+          await PushNotification.localNotificationSchedule(obj)
         } catch (error) {
           ToastAndroid.show('Gagal melakukan notifikasi', ToastAndroid.SHORT)
         }
