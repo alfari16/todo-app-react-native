@@ -20,5 +20,5 @@ $ npm start
 ```
 Open new tab in the same directory
 ```sh
-$ npm android
+$ npm run android
 ```
